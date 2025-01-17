@@ -1,29 +1,23 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Sidebar, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
-import { updateAuthenticated } from "@/store/auth";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { RootState } from "@/store/store";
+import { IUserStore } from "@/store/user";
+import { useSelector } from "react-redux";
 
 export default function Home() {
-  const [isLogout, setIsLogout] = useState(false);
-  const dispatch = useDispatch();
+  const { userInfo } = useSelector<RootState, IUserStore>((s) => s.user);
   const handleLogout = () => {
     localStorage.removeItem("information");
-    dispatch(updateAuthenticated(false));
-    setIsLogout(true);
+    window.location.href = "/auth/login";
   };
 
-  useEffect(() => {
-    if (isLogout) {
-      window.location.href = '/auth/login';
-    }
-  }, [isLogout]);
   return (
     <div>
       <Sidebar>
         <SidebarHeader>
           <div>huhu</div>
+          <p>{userInfo?.data?.attributes?.username}</p>
         </SidebarHeader>
         <SidebarFooter>
           <div>haha</div>

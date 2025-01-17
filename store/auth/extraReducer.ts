@@ -6,13 +6,13 @@ export const extraReducers = (
   builders: ActionReducerMapBuilder<IAuthStore>
 ) => {
   builders.addMatcher(
-    isAnyOf(authService.endpoints.checkAuth.matchFulfilled),
-    (state, _) => {
-      state.isAuthenciated = true;
+    isAnyOf(authService.endpoints.login.matchFulfilled, authService.endpoints.checkAuth.matchFulfilled),
+    (state, { payload }) => {
+      state.isAuthenciated = payload?.isAuthenticated;
     }
   );
 
-  builders.addMatcher(authService.endpoints.checkAuth.matchRejected, (state, _) => {
+  builders.addMatcher(isAnyOf(authService.endpoints.login.matchRejected, authService.endpoints.checkAuth.matchRejected), (state, _) => {
     state.isAuthenciated = false;
   });
 };

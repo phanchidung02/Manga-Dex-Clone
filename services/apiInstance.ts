@@ -46,7 +46,8 @@ const baseQuery = fetchBaseQuery({
               },
             }
           );
-          localStorage.setItem('information', JSON.stringify(res.data));
+          console.log(res);
+          localStorage.setItem("information", JSON.stringify(res.data));
           headers.set("Authorization", `Bearer ${res.data.access_token}`);
         }
         headers.set("Authorization", `Bearer ${token.access_token}`);

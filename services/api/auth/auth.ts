@@ -28,7 +28,6 @@ interface AuthResponse {
   permissions: string[]; // Array of permissions
 }
 
-
 export interface TokenResponse {
   access_token: string; // The access token (string, can be empty)
   client_type: string; // The client type, e.g., "personal"
@@ -39,6 +38,7 @@ export interface TokenResponse {
   scope: string; // Scope of the token
   session_state: string; // Session state identifier
   token_type: string;
+  isAuthenticated: boolean;
 }
 
 export interface RegisterApiArg {
@@ -74,7 +74,5 @@ export interface GoogleLogInPayload {
   idToken: string;
 }
 
-export const {
-  useLoginMutation,
-  useLazyCheckAuthQuery
-} = injectedRtkApi;
+export const { useLoginMutation, useCheckAuthQuery, useLazyCheckAuthQuery } =
+  injectedRtkApi;

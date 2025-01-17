@@ -14,24 +14,17 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-// import axios from "axios";
-import {
-  useLazyCheckAuthQuery,
-  useLoginMutation,
-} from "@/services/api/auth/auth";
-import { useRouter } from "next/navigation";
+import { useLoginMutation } from "@/services/api/auth/auth";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { IAuthStore } from "@/store/auth";
 
 function LoginForm() {
   const [login] = useLoginMutation();
-  const [checkAuth] = useLazyCheckAuthQuery();
-  const { isAuthenciated } = useSelector<RootState,IAuthStore>((s) => s.auth);
-  const router = useRouter();
+  const { isAuthenciated } = useSelector<RootState, IAuthStore>((s) => s.auth);
   useEffect(() => {
     if (isAuthenciated) {
-      router.push("/");
+      window.location.href = "/";
     }
   }, [isAuthenciated]);
   const form = useForm<ILoginForm>({
@@ -44,18 +37,12 @@ function LoginForm() {
 
   const onSubmit = async (data: ILoginForm) => {
     const payload: IAuth = {
-      grant_type: process.env.grant_type || "password",
       username: data.username,
       password: data.password,
-      client_id:
-        process.env.client_id ||
-        "personal-client-bb5c4fd7-9119-4576-906e-06406365d47e-1f4c55e7",
-      client_secret:
-        process.env.client_secret || "9Pbq6bfgq6oCmUCy2THQ6zbMQHK4yVw6",
     };
     const res = await login(payload);
+    if (!res.data) return;
     localStorage.setItem("information", JSON.stringify(res.data));
-    await checkAuth();
   };
 
   return (
