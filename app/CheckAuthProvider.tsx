@@ -1,30 +1,29 @@
 "use client";
+import { useAppLoading } from "@/hooks/use-loading";
 import { useCheckAuthQuery } from "@/services/api/auth/auth";
 import { useLazyGetMeQuery } from "@/services/api/users/user";
-import { IAuthStore } from "@/store/auth";
-import { RootState } from "@/store/store";
 import { usePathname } from "next/navigation";
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
 
 interface ICheckAuthProviderProps {
   children: React.ReactNode;
 }
 function CheckAuthProvider({ children }: ICheckAuthProviderProps) {
-  const { isAuthenciated } = useSelector<RootState, IAuthStore>((s) => s.auth);
-  const { isLoading } = useCheckAuthQuery();
-  const [getMe] = useLazyGetMeQuery();
+  const { isLoading, isError } = useCheckAuthQuery();
+  const [getMe, { isLoading: isLoadingUser }] = useLazyGetMeQuery();
   const pathname = usePathname();
+
+  useAppLoading([isLoading, isLoadingUser]);
 
   useEffect(() => {
     const isLoginPage = pathname.includes("/auth/login");
     if (isLoginPage) return;
-    if (!isAuthenciated && !isLoading) {
+    if (isError) {
       window.location.href = "/auth/login";
       return;
     }
     getMe();
-  }, []);
+  }, [isError]);
 
   return <div>{children}</div>;
 }

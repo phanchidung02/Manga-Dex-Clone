@@ -15,18 +15,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLoginMutation } from "@/services/api/auth/auth";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
-import { IAuthStore } from "@/store/auth";
+import { toast } from "react-toastify";
+import { useAppLoading } from "@/hooks/use-loading";
 
 function LoginForm() {
-  const [login] = useLoginMutation();
-  const { isAuthenciated } = useSelector<RootState, IAuthStore>((s) => s.auth);
+  const [login, { isSuccess, isLoading }] = useLoginMutation();
   useEffect(() => {
-    if (isAuthenciated) {
+    if (isSuccess) {
       window.location.href = "/";
     }
-  }, [isAuthenciated]);
+  }, [isSuccess]);
+
+  useAppLoading([isLoading]);
   const form = useForm<ILoginForm>({
     defaultValues: {
       username: "",
@@ -40,9 +40,17 @@ function LoginForm() {
       username: data.username,
       password: data.password,
     };
-    const res = await login(payload);
-    if (!res.data) return;
-    localStorage.setItem("information", JSON.stringify(res.data));
+    try {
+      const res = await login(payload);
+      if (res.error) {
+        const err = res.error as any;
+        throw new Error(err?.data?.message);
+      }
+      if (!res.data) return;
+      localStorage.setItem("information", JSON.stringify(res.data));
+    } catch (err: any) {
+      toast.error(err?.message);
+    }
   };
 
   return (

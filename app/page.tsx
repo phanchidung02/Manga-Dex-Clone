@@ -4,6 +4,7 @@ import { Sidebar, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
 import { RootState } from "@/store/store";
 import { IUserStore } from "@/store/user";
 import { useSelector } from "react-redux";
+import _ from "lodash";
 
 export default function Home() {
   const { userInfo } = useSelector<RootState, IUserStore>((s) => s.user);
@@ -11,6 +12,8 @@ export default function Home() {
     localStorage.removeItem("information");
     window.location.href = "/auth/login";
   };
+
+  if (_.isEmpty(userInfo)) return <></>;
 
   return (
     <div>
